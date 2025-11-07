@@ -10,6 +10,14 @@ A minimal campaign budget tracking tool built with Django REST Framework and Nex
 - **Responsive Design**: Mobile-friendly interface using shadcn/ui components
 - **Real-time Updates**: Live data updates between form submissions and table display
 
+## Screenshots
+
+### Desktop View
+![Desktop View](frontend/public/desktop.png)
+
+### Mobile View
+![Mobile View](frontend/public/mobile.png)
+
 ## Tech Stack
 
 ### Backend

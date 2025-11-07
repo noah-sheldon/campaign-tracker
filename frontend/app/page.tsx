@@ -56,13 +56,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Campaign Budget Tracker
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             Monitor and manage your advertising campaign budgets and spending
           </p>
         </header>
@@ -79,10 +79,10 @@ export default function Home() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h2 className="text-xl font-semibold mb-4">Campaign List</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4">Campaign List</h2>
               <CampaignTable
                 campaigns={campaigns}
                 onDelete={handleDeleteCampaign}
@@ -91,7 +91,7 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-1 lg:order-2">
             <CampaignForm
               onSubmit={handleCreateCampaign}
               isLoading={isSubmitting}

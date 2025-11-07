@@ -79,53 +79,124 @@ export function CampaignTable({ campaigns, onDelete, isLoading = false }: Campai
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Budget</TableHead>
-              <TableHead>Spend</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {campaigns.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                  No campaigns found. Add a new campaign to get started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              campaigns.map((campaign) => (
-                <TableRow key={campaign.id}>
-                  <TableCell className="font-medium">{campaign.name}</TableCell>
-                  <TableCell>{formatCurrency(campaign.budget)}</TableCell>
-                  <TableCell>{formatCurrency(campaign.spend)}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
-                        campaign.status
-                      )}`}
-                    >
-                      {campaign.status}
+      {/* Mobile Card View */}
+      <div className="block lg:hidden">
+        {campaigns.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 border rounded-md">
+            No campaigns found. Add a new campaign to get started.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {campaigns.map((campaign) => (
+              <div
+                key={campaign.id}
+                className="border rounded-lg p-4 bg-white shadow-sm"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-medium text-lg text-gray-900 leading-tight">
+                    {campaign.name}
+                  </h3>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                      campaign.status
+                    )}`}
+                  >
+                    {campaign.status}
+                  </span>
+                </div>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Budget:</span>
+                    <span className="text-sm font-medium">{formatCurrency(campaign.budget)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Spend:</span>
+                    <span className="text-sm font-medium">{formatCurrency(campaign.spend)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Remaining:</span>
+                    <span className="text-sm font-medium">
+                      {formatCurrency(campaign.budget - campaign.spend)}
                     </span>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteClick(campaign)}
-                    >
-                      Delete
-                    </Button>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteClick(campaign)}
+                    className="w-full sm:w-auto"
+                  >
+                    Delete Campaign
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block">
+        <div className="rounded-md border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="min-w-0">Name</TableHead>
+                <TableHead className="w-24 text-right">Budget</TableHead>
+                <TableHead className="w-24 text-right">Spend</TableHead>
+                <TableHead className="w-20">Status</TableHead>
+                <TableHead className="w-20">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {campaigns.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                    No campaigns found. Add a new campaign to get started.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                campaigns.map((campaign) => (
+                  <TableRow key={campaign.id}>
+                    <TableCell className="font-medium min-w-0">
+                      <div className="truncate pr-2" title={campaign.name}>
+                        {campaign.name}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-sm">
+                      {formatCurrency(campaign.budget)}
+                    </TableCell>
+                    <TableCell className="text-right text-sm">
+                      {formatCurrency(campaign.spend)}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                          campaign.status
+                        )}`}
+                      >
+                        {campaign.status === "Over Budget" ? "Over" : campaign.status === "On Track" ? "Track" : "Warning"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteClick(campaign)}
+                        className="text-xs px-2 py-1"
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
       
       <DeleteConfirmationDialog

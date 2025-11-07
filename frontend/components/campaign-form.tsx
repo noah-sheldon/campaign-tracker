@@ -28,7 +28,7 @@ export function CampaignForm({ onSubmit, isLoading = false }: CampaignFormProps)
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Add New Campaign</CardTitle>
+        <CardTitle className="text-lg sm:text-xl">Add New Campaign</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
