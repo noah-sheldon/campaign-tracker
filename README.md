@@ -44,7 +44,7 @@ A minimal campaign budget tracking tool built with Django REST Framework and Nex
 
 2. **Run with Docker Compose**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
 3. **Access the application**
