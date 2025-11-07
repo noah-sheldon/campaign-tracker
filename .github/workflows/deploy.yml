@@ -1,0 +1,94 @@
+name: Deploy Campaign Tracker
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+      
+      - name: Run Django tests
+        run: |
+          cd backend
+          source venv/bin/activate
+          python manage.py test
+      
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+      
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+      
+      - name: Run frontend type check
+        run: |
+          cd frontend
+          npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push Docker images
+        run: |
+          # Build and push backend image
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/campaign-tracker-backend:latest ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/campaign-tracker-backend:latest
+          
+          # Build and push frontend image  
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/campaign-tracker-frontend:latest ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/campaign-tracker-frontend:latest
+      
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /app/campaign-tracker
+            git pull origin main
+            docker-compose pull
+            docker-compose up -d --no-deps
+            docker system prune -f
